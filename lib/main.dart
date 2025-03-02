@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart' as sqlDataBase;
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  String mainPath =await sqlDataBase.getDatabasesPath();
+  String mydbName = "drosake.db";
+  String mydbPath = "$mainPath/$mydbName";
+  int versionDb=1;
+  sqlDataBase.openDatabase(mydbPath,version: versionDb,onCreate: (db, version) {
+    print(db);
+    print(version);
+  },);
   runApp(const MyApp());
 }
 
@@ -12,6 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+
       theme: ThemeData(
         // This is the theme of your application.
         //

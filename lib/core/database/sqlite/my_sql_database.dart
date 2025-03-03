@@ -1,26 +1,27 @@
 import 'package:sqflite/sqflite.dart';
 
+import '../../../constant/constants.dart';
 import 'crud.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sqlDatabase;
 
 class MySqlDataBase extends CRUD {
-  final String _userTable = "users";
-  final String _userColumnID = "id";
-  final String _userColumnUsername = "username";
-  final String _productTable = "products";
-  final String _productColumnID = "product_id";
-  final String _productColumnName = "product_name";
-  final String _productColumnPrice = "product_price";
-  final String _productColumnCount = "product_count";
-  final String _salesTable = "sales";
-  final String _salesColumnID = "sales_id";
-  final String _salesColumnUsername = "sales_username";
-  final String _salesColumnProductName = "sales_product_name";
+  // final String kUserTable = "users";
+  // final String kUserColumnID = "id";
+  // final String kUserColumnUsername = "username";
+  // final String kProductTable = "products";
+  // final String kProductColumnID = "product_id";
+  // final String kProductColumnName = "product_name";
+  // final String kProductColumnPrice = "product_price";
+  // final String kProductColumnCount = "product_count";
+  // final String kSalesTable = "sales";
+  // final String kSalesColumnID = "sales_id";
+  // final String kSalesColumnUsername = "sales_username";
+  // final String kSalesColumnProductName = "sales_product_name";
 
   Database? _db;
 
-  Future<Database?> initDatabase() async {
+  Future<Database?> _initDatabase() async {
     String databasePath = await sqlDatabase.getDatabasesPath();
 
     String databaseName = "management.db";
@@ -36,37 +37,68 @@ class MySqlDataBase extends CRUD {
 
   _onCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS $_userTable($_userColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $_userColumnUsername TEXT)");
+        "CREATE TABLE IF NOT EXISTS $kUserTable($kUserColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $kUserColumnUsername TEXT)");
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS $_productTable($_productColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $_productColumnName TEXT ,$_productColumnPrice REAL ,$_productColumnCount  INTEGER )");
+        "CREATE TABLE IF NOT EXISTS $kProductTable($kProductColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $kProductColumnName TEXT ,$kProductColumnPrice REAL ,$kProductColumnCount  INTEGER )");
     await db.execute(
-        "CREATE TABLE IF NOT EXISTS $_salesTable($_salesColumnID INTEGER PRIMARY KEY AUTOINCREMENT,$_salesColumnProductName TEXT , $_salesColumnUsername TEXT )");
+        "CREATE TABLE IF NOT EXISTS $kSalesTable($kSalesColumnID INTEGER PRIMARY KEY AUTOINCREMENT,$kSalesColumnProductName TEXT , $kSalesColumnUsername TEXT )");
   }
 
+
+
   @override
-  Future<int> delete() {
+
+  Future<bool> delete() async {
+    if (_db == null) {
+      await _initDatabase(); // Initialize the database if it's not already
+    }
     // TODO: implement delete
-    throw UnimplementedError();
+    int? deleted = await _db?.delete(
+      kUserTable,
+      where: "$kUserColumnID == 36",
+    );
+    await _db?.close();
+    return deleted! > 0 ? true : false;
   }
 
   @override
-  Future<int> insert() async {
+  Future<bool> insert({required String tableName,required Map<String, dynamic> values}) async {
+    if (_db == null) {
+      await _initDatabase(); // Initialize the database if it's not already
+    }
+
     // TODO: implement insert
-    int? inserted = await _db?.insert(_userTable, {
-      _userColumnUsername: "hussein",
-    });
-    return inserted!;
+    int? inserted = await _db?.insert(tableName, values);
+    await _db?.close();
+    return inserted! > 0 ? true : false;
   }
 
   @override
-  Future<int> select() {
-    // TODO: implement select
-    throw UnimplementedError();
+  Future<List<Map<String, Object?>>>  select({required String tableName}) async {
+    if (_db == null) {
+      await _initDatabase(); // Initialize the database if it's not already
+    }
+
+    // TODO: implement insert
+    List<Map<String, Object?>>? data = await _db?.query(tableName,);
+    await _db?.close();
+    return data!;
   }
 
   @override
-  Future<int> update() {
+  Future<bool> update() async {
+    if (_db == null) {
+      await _initDatabase(); // Initialize the database if it's not already
+    }
     // TODO: implement update
-    throw UnimplementedError();
+    int? updated = await _db?.update(
+      kUserTable,
+      {
+        kUserColumnUsername: "hussein",
+      },
+      where: "$kUserColumnID == 2",
+    );
+    await _db?.close();
+    return updated! > 0 ? true : false;
   }
 }

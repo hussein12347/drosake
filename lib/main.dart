@@ -1,10 +1,14 @@
 import 'package:drosake/views/home.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart' as sqlDataBase;
+import '';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-void main()  {
+import 'core/database/sqlite/my_sql_database.dart';
+
+Future<void> main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 

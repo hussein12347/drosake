@@ -1,0 +1,12 @@
+const String kUserTable = "users";
+const String kUserColumnID = "id";
+const String kUserColumnUsername = "username";
+const String kProductTable = "products";
+const String kProductColumnID = "product_id";
+const String kProductColumnName = "product_name";
+const String kProductColumnPrice = "product_price";
+const String kProductColumnCount = "product_count";
+const String kSalesTable = "sales";
+const String kSalesColumnID = "sales_id";
+const String kSalesColumnUsername = "sales_username";
+const String kSalesColumnProductName = "sales_product_name";

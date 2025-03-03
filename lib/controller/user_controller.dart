@@ -4,9 +4,10 @@ import '../core/database/sqlite/my_sql_database.dart';
 class UserController {
   List dataUser=[];
   UserController(){
-    selectUser();
+    select(tableName: kUserTable);
+    select(tableName: kProductTable);
   }
-  Future<void> insertUser({required String username}) async {
+  Future<void> insert({required String tableName,required String username}) async {
     MySqlDataBase db = MySqlDataBase();
     bool inserted = await db.insert(
       tableName: kUserTable,
@@ -14,11 +15,11 @@ class UserController {
     );
     print(inserted);
 
-    await selectUser();
+    await select(tableName:tableName );
   }
 
-  Future<void> selectUser(
-      { String tableName = kUserTable}) async {
+  Future<void> select(
+      { required String tableName }) async {
     MySqlDataBase db = MySqlDataBase();
   dataUser = await db.select(tableName: tableName);
 

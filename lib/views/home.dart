@@ -32,12 +32,9 @@ class _HomeState extends State<Home> {
             ),
             TextButton(
                 onPressed: () async {
-                  await _userController.insertUser(
-                      username: _userNameController.text);
-                  MySqlDataBase MySqlDataBas=MySqlDataBase();
-
-                  await MySqlDataBas.delete();
-
+                  await _userController.insert(
+                      username: _userNameController.text, tableName: kUserTable);
+                  _userController.select(tableName: kUserTable);
                   setState(()  {
                     _userNameController.clear();
                   });

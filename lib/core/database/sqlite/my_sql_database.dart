@@ -86,17 +86,15 @@ class MySqlDataBase extends CRUD {
   }
 
   @override
-  Future<bool> update() async {
+  Future<bool> update({required String tableName,required int id, required Map<String, dynamic> values}) async {
     if (_db == null) {
       await _initDatabase(); // Initialize the database if it's not already
     }
     // TODO: implement update
     int? updated = await _db?.update(
-      kUserTable,
-      {
-        kUserColumnUsername: "hussein",
-      },
-      where: "$kUserColumnID == 2",
+      tableName,
+      values,
+      where: "$kUserColumnID == $id",
     );
     await _db?.close();
     return updated! > 0 ? true : false;

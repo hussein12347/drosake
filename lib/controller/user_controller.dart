@@ -4,8 +4,7 @@ import '../core/database/sqlite/my_sql_database.dart';
 class UserController {
   List dataUser=[];
   UserController(){
-    select(tableName: kUserTable);
-    select(tableName: kProductTable);
+
   }
   Future<void> insert({required String tableName,required String username}) async {
     MySqlDataBase db = MySqlDataBase();
@@ -26,4 +25,15 @@ class UserController {
     print(dataUser);
 
   }
+
+  Future<void> update(
+      {required String tableName,required int id, required Map<String, dynamic> values}) async {
+    MySqlDataBase db = MySqlDataBase();
+  await db.update(tableName: tableName, id: id, values: values);
+
+
+  }
+
+
+
 }

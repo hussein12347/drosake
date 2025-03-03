@@ -15,9 +15,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _userNameEditController = TextEditingController();
   final UserController _userController = UserController();
 
   @override
+  @override
+  void initState() {
+    super.initState();
+    _initializeUser();
+  }
+
+  Future<void> _initializeUser() async {
+    await _userController.select(tableName: kUserTable);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
@@ -33,9 +44,10 @@ class _HomeState extends State<Home> {
             TextButton(
                 onPressed: () async {
                   await _userController.insert(
-                      username: _userNameController.text, tableName: kUserTable);
+                      username: _userNameController.text,
+                      tableName: kUserTable);
                   _userController.select(tableName: kUserTable);
-                  setState(()  {
+                  setState(() {
                     _userNameController.clear();
                   });
                 },
@@ -43,15 +55,71 @@ class _HomeState extends State<Home> {
             Expanded(
               child: ListView.separated(
                   shrinkWrap: true,
-                  itemBuilder: (context, index) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("id: ${_userController.dataUser[index]['id']}"),
-                          const SizedBox(height: 5,),
-                          Text("name: ${_userController.dataUser[index]['username']}"),
-                        ],
+                  itemBuilder: (context, index) => InkWell(
+                        onTap: () {
+                          _userNameEditController.text =
+                              _userController.dataUser[index]['username'];
+
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              int id = _userController.dataUser[index]['id'];
+                              return Container(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    TextField(
+                                      controller: _userNameEditController,
+                                      decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          label: Text("user name")),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              await _userController.update(
+                                                  tableName: kUserTable,
+                                                  id: id,
+                                                  values: {
+                                                    kUserColumnUsername:
+                                                        _userNameEditController
+                                                            .text
+                                                  });
+                                              await _userController.select(
+                                                  tableName: kUserTable);
+                                              setState(() {
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("update")),
+                                        ElevatedButton(
+                                            onPressed: () {},
+                                            child: Text("delete")),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "id: ${_userController.dataUser[index]['id']}"),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                                "name: ${_userController.dataUser[index]['username']}"),
+                          ],
+                        ),
                       ),
-                  separatorBuilder: (context, index) => SizedBox(
+                  separatorBuilder: (context, index) => const SizedBox(
                         height: 20,
                       ),
                   itemCount: _userController.dataUser.length),

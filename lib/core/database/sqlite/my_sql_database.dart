@@ -18,48 +18,54 @@ class MySqlDataBase extends CRUD {
   final String _salesColumnUsername = "sales_username";
   final String _salesColumnProductName = "sales_product_name";
 
-  initDatabase() async {
+  Database? _db;
+
+  Future<Database?> initDatabase() async {
     String databasePath = await sqlDatabase.getDatabasesPath();
 
     String databaseName = "management.db";
     String realDatabasePath = join(databasePath, databaseName);
     int version = 1;
-    sqlDatabase.openDatabase(
+    _db ??= await sqlDatabase.openDatabase(
       realDatabasePath,
       version: version,
       onCreate: _onCreate,
     );
+    return _db;
   }
 
   _onCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $_userTable($_userColumnID INTEGER , $_userColumnUsername TEXT)");
+        "CREATE TABLE IF NOT EXISTS $_userTable($_userColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $_userColumnUsername TEXT)");
     await db.execute(
-        "CREATE TABLE $_productTable($_productColumnID INTEGER , $_productColumnName TEXT ,$_productColumnPrice REAL ,$_productColumnCount  INTEGER )");
+        "CREATE TABLE IF NOT EXISTS $_productTable($_productColumnID INTEGER PRIMARY KEY AUTOINCREMENT, $_productColumnName TEXT ,$_productColumnPrice REAL ,$_productColumnCount  INTEGER )");
     await db.execute(
-        "CREATE TABLE $_salesTable($_salesColumnID INTEGER  ,$_salesColumnProductName TEXT , $_salesColumnUsername TEXT )");
+        "CREATE TABLE IF NOT EXISTS $_salesTable($_salesColumnID INTEGER PRIMARY KEY AUTOINCREMENT,$_salesColumnProductName TEXT , $_salesColumnUsername TEXT )");
   }
 
   @override
-  Future<void> delete() {
+  Future<int> delete() {
     // TODO: implement delete
     throw UnimplementedError();
   }
 
   @override
-  Future<void> insert() {
+  Future<int> insert() async {
     // TODO: implement insert
-    throw UnimplementedError();
+    int? inserted = await _db?.insert(_userTable, {
+      _userColumnUsername: "hussein",
+    });
+    return inserted!;
   }
 
   @override
-  Future<void> select() {
+  Future<int> select() {
     // TODO: implement select
     throw UnimplementedError();
   }
 
   @override
-  Future<void> update() {
+  Future<int> update() {
     // TODO: implement update
     throw UnimplementedError();
   }
